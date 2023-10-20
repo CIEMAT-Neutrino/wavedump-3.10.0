@@ -1,3 +1,6 @@
+# Local Files
+*.Po
+
 # Prerequisites
 *.d
 
