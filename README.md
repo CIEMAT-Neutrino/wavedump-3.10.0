@@ -62,6 +62,21 @@ Bindkey help
 Press a key to continue
 ```
 
+Examples of control plots from started terminal data acquisition:
+
+- By pressing the key 'P' it is possible to plot the waveform:
+
+![Waveform](/images/Wvf_View.png)
+
+- By pressing the key 'f' it is possible to plot the FFT:
+
+![FFT](/images/FFT_View.png)
+
+- By pressing the key 'h' it is possible to plot the Histogram:
+
+![Histogram](/images/Hist_View.png)
+
+
 ## How to get support
 
 Our Software Support Group is available for questions, support and any other
