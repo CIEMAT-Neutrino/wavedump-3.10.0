@@ -26,11 +26,14 @@ Binary wavedump automatically saved in /usr/local/bin
 
 ## How To Use:
 
+```bash
 wavedump [ConfigFile]
+```
 
-Default config file is "/etc/wavedump/WaveDumpConfig.txt"
-or "/etc/wavedump/WaveDumpConfig_X742.txt" for X742 boards,
-or "/etc/wavedump/WaveDumpConfig_X740.txt" for X740 boards.
+Examples:
+- "/etc/wavedump/WaveDumpConfig.txt" (default if no argument is given)
+- "/etc/wavedump/WaveDumpConfig_X742.txt" for X742 boards,
+- "/etc/wavedump/WaveDumpConfig_X740.txt" for X740 boards.
 
 Keyword list and syntax for the configuration file:
 For configuration file syntax please refer to the Wavedump Manual.
@@ -65,3 +68,13 @@ Our Software Support Group is available for questions, support and any other
 software related issue concerning CAEN products; for software support
 visit the page https://www.caen.it/support-services/support-form or send an email to
 support.computing@caen.it
+
+## How to contribute
+
+If you want to contribute to the development of CAEN software visit the page
+[CAEN](https://www.caen.it/)
+
+## License
+
+This software is provided under the MIT license, please read LICENSE file for
+further information: [MIT](https://choosealicense.com/licenses/mit/)
