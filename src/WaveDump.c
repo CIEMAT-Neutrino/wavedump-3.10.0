@@ -79,7 +79,7 @@ typedef enum  {
 static char ErrMsg[ERR_DUMMY_LAST][100] = {
     "No Error",                                         /* ERR_NONE */
     "Configuration File not found",                     /* ERR_CONF_FILE_NOT_FOUND */
-    "Can't open the digitizer",                         /* ERR_DGZ_OPEN */
+    "Can't open the digitizer :)",                      /* ERR_DGZ_OPEN */
     "Can't read the Board Info",                        /* ERR_BOARD_INFO_READ */
     "Can't run WaveDump for this digitizer",            /* ERR_INVALID_BOARD_TYPE */
     "Can't program the digitizer",                      /* ERR_DGZ_PROGRAM */
@@ -508,7 +508,7 @@ void calibrate(int handle, WaveDumpRun_t *WDrun, CAEN_DGTZ_BoardInfo_t BoardInfo
         if (WDrun->AcqRun == 0) {
             int32_t ret = CAEN_DGTZ_Calibrate(handle);
             if (ret == CAEN_DGTZ_Success) {
-                printf("ADC Calibration check: the board is calibrated.\n");
+                printf("ADC Calibration check: the board is calibrated :) .\n");
             }
             else {
                 printf("ADC Calibration failed. CAENDigitizer ERR %d\n", ret);
@@ -2210,13 +2210,26 @@ InterruptTimeout:
                             }
                             memset(WDrun.Histogram[ch], 0, (uint64_t)(1<<WDcfg.Nbit) * sizeof(uint32_t));
                         }
-                        if (WDcfg.Nbit == 8)
-                            for(i=0; i<(int)Event8->ChSize[ch]; i++)
-                                WDrun.Histogram[ch][Event8->DataChannel[ch][i]]++;
+                        if (WDcfg.Nbit == 8){
+                            float baseline = 0;
+                            for(i=0; i<200; i++){
+                                baseline += Event8->DataChannel[ch][i];
+                            }
+                            for(i=0; i<(int)Event8->ChSize[ch]; i++){
+                                float amp = Event8->DataChannel[ch][i] - baseline/200;
+                                WDrun.Histogram[ch][(int)amp]++;
+                            }
+                        }
                         else {
                             if (BoardInfo.FamilyCode != CAEN_DGTZ_XX742_FAMILY_CODE) {
-                                for(i=0; i<(int)Event16->ChSize[ch]; i++)
-                                    WDrun.Histogram[ch][Event16->DataChannel[ch][i]]++;
+                                float baseline = 0;
+                                for(i=0; i<200; i++){
+                                    baseline += Event16->DataChannel[ch][i];
+                                }
+                                for(i=0; i<(int)Event16->ChSize[ch]; i++){
+                                    float amp = Event16->DataChannel[ch][i] - baseline/200;
+                                    WDrun.Histogram[ch][(int)amp]++;
+                            }
                             }
                             else {
                                 printf("Can't build samples histogram for this board: it has float samples.\n");
