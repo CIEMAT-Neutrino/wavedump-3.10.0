@@ -548,7 +548,7 @@ void Calibrate_XX740_DC_Offset(int handle, WaveDumpConfig_t *WDcfg, CAEN_DGTZ_Bo
 	char *buffer = NULL;
 	char *EventPtr = NULL;
 	CAEN_DGTZ_UINT16_EVENT_t    *Event16 = NULL;
-
+    
 	float avg_value[NPOINTS][MAX_CH] = { 0 };
 	uint32_t dc[NPOINTS] = { 25,75 }; //test values (%)
 	uint32_t groupmask = 0;
@@ -1756,7 +1756,7 @@ int main(int argc, char *argv[])
 
     printf("\n");
     printf("**************************************************************\n");
-    printf("                        Wave Dump %s\n", WaveDump_Release);
+    printf("                        Wave Dump :) %s\n", WaveDump_Release);
     printf("**************************************************************\n");
 
 	/* *************************************************************************************** */
@@ -2210,26 +2210,38 @@ InterruptTimeout:
                             }
                             memset(WDrun.Histogram[ch], 0, (uint64_t)(1<<WDcfg.Nbit) * sizeof(uint32_t));
                         }
+                        int32_t baseline;
                         if (WDcfg.Nbit == 8){
-                            float baseline = 0;
+                            int16_t baseline = 0;
+                            int16_t integral=0;
                             for(i=0; i<200; i++){
                                 baseline += Event8->DataChannel[ch][i];
                             }
-                            for(i=0; i<(int)Event8->ChSize[ch]; i++){
-                                float amp = Event8->DataChannel[ch][i] - baseline/200;
-                                WDrun.Histogram[ch][(int)amp]++;
+                            for(i=0; i<(int16_t)Event8->ChSize[ch]; i++){
+                                int16_t amp = Event8->DataChannel[ch][i] - baseline/200;
+                                integral += amp/100;
                             }
+                        WDrun.Histogram[ch][(int)integral]++;
                         }
                         else {
                             if (BoardInfo.FamilyCode != CAEN_DGTZ_XX742_FAMILY_CODE) {
-                                float baseline = 0;
-                                for(i=0; i<200; i++){
+                                baseline = 0;
+                                int16_t integral = 0;
+                                int16_t pretrig = (1-(float)WDcfg.PostTrigger/100)*Event16->ChSize[ch];
+                                for(i=0; i<pretrig; i++){
                                     baseline += Event16->DataChannel[ch][i];
+                                   /* printf("i %i \n",i);
+                                    printf("Event %i \n",Event16->DataChannel[ch][i]);
+                                    printf("base %i \n",baseline);
+                                    printf("pret %i \n",pretrig);*/
+                                    
                                 }
-                                for(i=0; i<(int)Event16->ChSize[ch]; i++){
-                                    float amp = Event16->DataChannel[ch][i] - baseline/200;
-                                    WDrun.Histogram[ch][(int)amp]++;
+                                baseline = baseline/(pretrig);
+                                for(i=0; i<(int16_t)Event16->ChSize[ch]; i++){
+                                    int16_t amp = Event16->DataChannel[ch][i] - baseline;
+                                    integral += amp/100;
                             }
+                            WDrun.Histogram[ch][(int)integral]++;
                             }
                             else {
                                 printf("Can't build samples histogram for this board: it has float samples.\n");
